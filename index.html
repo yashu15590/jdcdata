@@ -270,10 +270,10 @@ function proxyImage(url) {
 }
 
 // Modify how the image is loaded in your JavaScript:
-let source_urlold = submission.preview?.images?.[0]?.source?.url || "No Image Available";
-let proxiedImage = proxyImage(source_urlold);
+let source_url = submission.preview?.images?.[0]?.source?.url || "No Image Available";
+let proxiedImage = proxyImage(source_url);
 
-                let source_url = proxiedImage
+                
 
                 let card = document.createElement("div");
                 card.className = "card";
@@ -287,7 +287,7 @@ let proxiedImage = proxyImage(source_urlold);
                         </strong>
                     </p>
 
-                    ${source_url ? `<img src="${source_url}" alt="Submission Image" onload="imageLoaded(this)">` : "<p>No Image Available</p>"}
+                    ${source_url ? `<img src="${proxiedImage}" alt="Submission Image" onload="imageLoaded(this)">` : "<p>No Image Available</p>"}
                     
                     <p class="comment">
                         <strong>💕</strong> ${comment.body || "No Comment"}
