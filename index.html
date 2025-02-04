@@ -266,8 +266,9 @@
 
 
 function proxyImage(url) {
-    return `https://corsproxy.io/?${encodeURIComponent(url)}`;
+    return `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`;
 }
+
 
 // Modify how the image is loaded in your JavaScript:
 let source_url = submission.preview?.images?.[0]?.source?.url || "No Image Available";
