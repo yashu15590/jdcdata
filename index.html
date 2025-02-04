@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reddit Data Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,7 +15,7 @@
         h1 {
             color: #333;
         }
-        .card {
+        /* .card {
             background: white;
             margin: 20px auto;
             padding: 15px;
@@ -22,16 +23,207 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
             text-align: left;
-        }
+            position: relative;
+        } */
         img {
             max-width: 100%;
             border-radius: 5px;
         }
-        .loading {
-            font-size: 18px;
-            color: #777;
-            margin: 20px 0;
+        /* .capture-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        } */
+        
+        
+        /* .card {
+            background: white;
+            margin: 20px auto;
+            padding: 15px;
+            width: 80%;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            text-align: left;
+            position: relative;
+            padding-top: 40px; 
         }
+
+        .capture-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background: rgb(27, 25, 25);
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 10;
+        } */
+
+        .card a {
+            text-decoration: none; /* Remove underline */
+            color: black; /* Change to black or any preferred color */
+            font-weight: bold; /* Make it bold like a title */
+        }
+
+        .card a:hover {
+            color: red; /* Change color on hover */
+        }
+
+        /* .card {
+            position: relative;
+            background: white;
+            margin: 20px auto;
+            padding: 15px;
+            width: 80%;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            text-align: left;
+            overflow: hidden;
+        } */
+
+        /* .card img {
+            max-width: 100%;
+            border-radius: 5px;
+            display: block;
+            position: relative;
+        } */
+
+        /* .capture-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6); 
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+        } */
+
+        /* .capture-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        } */
+
+
+        .card {
+            position: relative;
+            background: white;
+            margin: 20px auto;
+            padding: 15px;
+            width: 80%;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            text-align: left;
+            overflow: hidden;
+            padding-bottom: 40px; /* Extra space for button */
+        }
+
+        .card img {
+            max-width: 100%;
+            border-radius: 5px;
+            display: block;
+        }
+
+        /* .capture-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            white-space: nowrap; 
+            min-width: auto; 
+            max-width: fit-content; 
+        } */
+
+        .capture-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            padding: 10px 0; /* Add padding for better spacing */
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Space between the heart and title */
+        }
+
+        .title a {
+            text-decoration: none;
+            color: #444; /* Dark gray for a premium look */
+            transition: color 0.3s ease-in-out;
+        }
+
+        .title a:hover {
+            color: #e44d26; /* Stylish hover effect (reddish tone) */
+        }
+
+        .capture-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            border: none;
+            background: #e44d26;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .capture-btn:hover {
+            background: #c0392b;
+        }
+
+
+        .comment {
+            font-size: 16px;
+            font-weight: normal;
+            color: #222;
+            background: #f9f9f9;
+            padding: 12px;
+            margin-top: 10px;
+            border-left: 4px solid #e44d26; /* Adds a nice colored border */
+            border-radius: 5px;
+            line-height: 1.5; /* Improves readability */
+        }
+
+        .comment strong {
+            color: #d35400; /* Gives emphasis to the heart icon */
+            font-size: 18px;
+            margin-right: 5px;
+        }
+
+        .comment:hover {
+            background: #f0f0f0; /* Subtle hover effect */
+        }
+
+
+
+
+
+
+
+
+        
     </style>
 </head>
 <body>
@@ -44,13 +236,11 @@
     <script>
         let data = [];
         let currentIndex = 0;
-        const batchSize = 20; // Load 20 entries at a time
+        const batchSize = 5; // Load 5 entries at a time
         const container = document.getElementById("container");
         const loadingIndicator = document.getElementById("loading");
 
         // Fetch JSON data
-
-
         fetch("random_5000_entries.json")
             .then(response => response.json())
             .then(jsonData => {
@@ -59,7 +249,6 @@
                 loadMoreData();
             })
             .catch(error => console.error("Error loading JSON:", error));
-
 
         function loadMoreData() {
             if (currentIndex >= data.length) {
@@ -73,20 +262,57 @@
             batch.forEach((entry, index) => {
                 let comment = entry.comment_json || {};
                 let submission = entry.submission_json || {};
-                let source_url = submission.preview?.images?.[0]?.source?.url || "No Image Available";
+                let source_url = submission.preview?.images?.[0]?.source?.url || "";
 
-                let card = `
-                    <div class="card">
-                        
-                        <p><strong>❤ ${submission.title || "No Title"}</strong> </p>
-                        <p><a href="${submission.url || "#"}" target="_blank">Url</a>, <a href="https://reddit.com${submission.permalink || "#"}" target="_blank">Reddit Link</a> </p>
-                   
-                        <img src="${source_url}" alt="Submission Image">
-			<p><strong>💕</strong> ${comment.body || "No Comment"}</p>
-                        
-                    </div>
-                `;
-                container.innerHTML += card;
+                let card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    
+                    
+                    <p class="title">
+                        <strong>
+                            <a href="${submission.url || "#"}" target="_blank">❤</a> 
+                            <a href="https://reddit.com${submission.permalink || "#"}" target="_blank">${submission.title || "No Title"}</a>
+                        </strong>
+                    </p>
+
+                    ${source_url ? `<img src="${source_url}" alt="Submission Image" onload="imageLoaded(this)">` : "<p>No Image Available</p>"}
+                    
+                    <p class="comment">
+                        <strong>💕</strong> ${comment.body || "No Comment"}
+                    </p>
+
+
+                    <button class="capture-btn" onclick="captureScreenshot(this)">📸</button>
+                
+                `
+                ;
+                container.appendChild(card);
+            });
+        }
+
+        function captureScreenshot(button) {
+            let card = button.parentElement; // Get the card container
+            let title = card.querySelector("p strong a:last-child").innerText || "screenshot"; // Get title
+
+            
+            // Wait for images to load
+            let images = card.getElementsByTagName("img");
+            let imagePromises = Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => img.onload = resolve);
+            });
+
+            Promise.all(imagePromises).then(() => {
+                html2canvas(card, { useCORS: true }).then(canvas => {
+                    let imageURL = canvas.toDataURL("image/png");
+
+                    // Create a download link
+                    let link = document.createElement("a");
+                    link.href = imageURL;
+                    link.download = `${title.replace(/[^a-zA-Z0-9]/g, "_")}.png`;
+                    link.click();
+                });
             });
         }
 
@@ -96,11 +322,11 @@
                 loadMoreData();
             }
         });
+
         // Reset scrollbar to top on page reload
         window.onbeforeunload = function () {
             window.scrollTo(0, 0);
         };
-
     </script>
 
 </body>
