@@ -262,7 +262,18 @@
             batch.forEach((entry, index) => {
                 let comment = entry.comment_json || {};
                 let submission = entry.submission_json || {};
-                let source_url = submission.preview?.images?.[0]?.source?.url || "";
+                
+
+
+function proxyImage(url) {
+    return `https://corsproxy.io/?${encodeURIComponent(url)}`;
+}
+
+// Modify how the image is loaded in your JavaScript:
+let source_urlold = submission.preview?.images?.[0]?.source?.url || "No Image Available";
+let proxiedImage = proxyImage(source_urlold);
+
+                let source_url = proxiedImage
 
                 let card = document.createElement("div");
                 card.className = "card";
