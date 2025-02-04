@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reddit Data Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .card {
+            background: white;
+            margin: 20px auto;
+            padding: 15px;
+            width: 80%;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            text-align: left;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .loading {
+            font-size: 18px;
+            color: #777;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🔹 Reddit Comment & Submission Viewer</h1>
+    <p>Scroll down to load more data...</p>
+    <div id="container"></div>
+    <p id="loading" class="loading">Loading more data...</p>
+
+    <script>
+        let data = [];
+        let currentIndex = 0;
+        const batchSize = 20; // Load 20 entries at a time
+        const container = document.getElementById("container");
+        const loadingIndicator = document.getElementById("loading");
+
+        // Fetch JSON data
+
+
+        fetch("random_5000_entries.json")
+            .then(response => response.json())
+            .then(jsonData => {
+                data = jsonData;
+                currentIndex = Math.floor(Math.random() * data.length); // Start at a random index
+                loadMoreData();
+            })
+            .catch(error => console.error("Error loading JSON:", error));
+
+
+        function loadMoreData() {
+            if (currentIndex >= data.length) {
+                loadingIndicator.innerHTML = "No more data to load.";
+                return;
+            }
+
+            let batch = data.slice(currentIndex, currentIndex + batchSize);
+            currentIndex += batchSize;
+
+            batch.forEach((entry, index) => {
+                let comment = entry.comment_json || {};
+                let submission = entry.submission_json || {};
+                let source_url = submission.preview?.images?.[0]?.source?.url || "No Image Available";
+
+                let card = `
+                    <div class="card">
+                        
+                        <p><strong>❤ ${submission.title || "No Title"}</strong> </p>
+                        <p><a href="${submission.url || "#"}" target="_blank">Url</a>, <a href="https://reddit.com${submission.permalink || "#"}" target="_blank">Reddit Link</a> </p>
+                   
+                        <img src="${source_url}" alt="Submission Image">
+			<p><strong>💕</strong> ${comment.body || "No Comment"}</p>
+                        
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        // Detect when user scrolls near the bottom
+        window.addEventListener("scroll", () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                loadMoreData();
+            }
+        });
+        // Reset scrollbar to top on page reload
+        window.onbeforeunload = function () {
+            window.scrollTo(0, 0);
+        };
+
+    </script>
+
+</body>
+</html>
